@@ -104,3 +104,21 @@ courriers/
 - API REST (Django REST Framework) pour une application mobile native.
 - Notifications par e-mail en plus des notifications internes.
 - Recherche plein texte et export des archives.
+
+## 10. Déploiement sur Render
+
+Le projet est prêt pour Render (fichiers `build.sh` et `render.yaml`, `settings.py`
+lisant ses paramètres depuis l'environnement, WhiteNoise pour les fichiers statiques,
+PostgreSQL via `DATABASE_URL`).
+
+Déploiement via Blueprint :
+1. Pousser le projet sur GitHub (le `render.yaml` doit être à la racine).
+2. Sur render.com : New → Blueprint → sélectionner le dépôt. Render crée la base
+   PostgreSQL et le service web, et injecte `DATABASE_URL`, `SECRET_KEY`, `DEBUG=False`.
+3. Après le premier déploiement, ouvrir Shell (onglet du service) et exécuter :
+   `python manage.py seed_demo` (données de démo) ou
+   `python manage.py createsuperuser` (compte administrateur).
+
+Remarque : sur le plan gratuit, le système de fichiers est éphémère ; les pièces
+scannées (dossier `media/`) sont perdues au redéploiement. Pour les conserver,
+ajouter un disque persistant Render ou un stockage cloud (ex. Amazon S3).

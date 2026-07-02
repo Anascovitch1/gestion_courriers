@@ -1,0 +1,15 @@
+{% extends "courriers/base.html" %}
+{% block titre %}Notifications{% endblock %}
+{% block contenu %}
+<h1 class="h4 mb-3">Notifications</h1>
+<div class="card"><ul class="list-group list-group-flush">
+  {% for n in notifs %}
+    <li class="list-group-item d-flex justify-content-between {% if not n.lu %}fw-semibold{% endif %}">
+      <span>{% if n.courrier %}<a href="{% url 'courrier_detail' n.courrier.pk %}">{{ n.message }}</a>{% else %}{{ n.message }}{% endif %}</span>
+      <span class="text-muted small">{{ n.date|date:"d/m/Y H:i" }}</span>
+    </li>
+  {% empty %}
+    <li class="list-group-item text-muted">Aucune notification.</li>
+  {% endfor %}
+</ul></div>
+{% endblock %}

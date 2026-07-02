@@ -1,0 +1,32 @@
+{% extends "courriers/base.html" %}
+{% block titre %}Archives{% endblock %}
+{% block contenu %}
+<h1 class="h4 mb-3">Archives des courriers clôturés</h1>
+
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-6"><input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Référence, objet, NIF, raison sociale..."></div>
+  <div class="col-md-2"><button class="btn btn-outline-secondary w-100"><i class="bi bi-search"></i> Rechercher</button></div>
+</form>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light"><tr><th>Référence</th><th>Type</th><th>Objet</th><th>Contribuable (NIF)</th><th>Archivé le</th><th></th></tr></thead>
+      <tbody>
+      {% for c in courriers %}
+        <tr>
+          <td class="fw-semibold">{{ c.reference }}</td>
+          <td>{{ c.get_type_display }}</td>
+          <td>{{ c.objet|truncatechars:40 }}</td>
+          <td class="small">{{ c.contribuable.raison_sociale }}<br><span class="text-muted">{{ c.contribuable.nif }}</span></td>
+          <td class="small">{{ c.date_archivage|date:"d/m/Y" }}</td>
+          <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{% url 'courrier_detail' c.pk %}">Ouvrir</a></td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6" class="text-center text-muted py-3">Aucun courrier archivé.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

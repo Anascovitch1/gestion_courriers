@@ -1,0 +1,122 @@
+{% extends "courriers/base.html" %}
+{% block titre %}Enregistrer un courrier{% endblock %}
+{% block contenu %}
+<h1 class="h4 mb-3">Enregistrer un courrier</h1>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <div class="card">
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Type de courrier</label>
+            {{ form.type }}
+          </div>
+
+          <div class="mb-3 position-relative">
+            <label class="form-label">Contribuable — rechercher par NIF ou raison sociale</label>
+            <input type="text" id="recherche-contribuable" class="form-control"
+                   placeholder="Tapez le NIF ou le nom puis sélectionnez…" autocomplete="off">
+            <div id="resultats-contribuable" class="recherche-resultats d-none"></div>
+            <div class="form-text">Le contribuable sélectionné s'affiche ci-dessous. Sinon,
+              <a href="{% url 'contribuable_create' %}?next={{ request.path }}">créez une fiche</a>.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Contribuable sélectionné</label>
+            {{ form.contribuable }}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Objet</label>
+            {{ form.objet }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            {{ form.description }}
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Date du courrier</label>
+              {{ form.date_courrier }}
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">{{ form.courrier_parent.label }}</label>
+              {{ form.courrier_parent }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="card">
+        <div class="card-header bg-white fw-semibold"><i class="bi bi-paperclip"></i> Courrier scanné</div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Fichier (PDF / image)</label>
+            {{ pj_form.fichier }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Libellé</label>
+            {{ pj_form.libelle }}
+          </div>
+        </div>
+      </div>
+      <div class="d-grid mt-3">
+        <button class="btn btn-primary btn-lg" type="submit"><i class="bi bi-save"></i> Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const input = document.getElementById('recherche-contribuable');
+const boite = document.getElementById('resultats-contribuable');
+const select = document.getElementById('id_contribuable');
+let timer = null;
+
+input.addEventListener('input', () => {
+  clearTimeout(timer);
+  const q = input.value.trim();
+  if (q.length < 2) { boite.classList.add('d-none'); return; }
+  timer = setTimeout(() => {
+    fetch("{% url 'contribuable_recherche' %}?q=" + encodeURIComponent(q))
+      .then(r => r.json())
+      .then(data => {
+        boite.innerHTML = '';
+        if (!data.resultats.length) {
+          boite.innerHTML = '<div class="p-2 text-muted small">Aucun contribuable trouvé.</div>';
+        }
+        data.resultats.forEach(c => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.innerHTML = '<strong>' + c.nif + '</strong> — ' + c.raison_sociale +
+                        '<br><span class="text-muted small">' + (c.activite || '') + '</span>';
+          b.onclick = () => choisir(c);
+          boite.appendChild(b);
+        });
+        boite.classList.remove('d-none');
+      });
+  }, 250);
+});
+
+function choisir(c) {
+  let opt = select.querySelector('option[value="' + c.id + '"]');
+  if (!opt) {
+    opt = new Option(c.nif + ' — ' + c.raison_sociale, c.id, true, true);
+    select.add(opt);
+  }
+  select.value = c.id;
+  input.value = c.nif + ' — ' + c.raison_sociale;
+  boite.classList.add('d-none');
+}
+
+document.addEventListener('click', e => {
+  if (!boite.contains(e.target) && e.target !== input) boite.classList.add('d-none');
+});
+</script>
+{% endblock %}

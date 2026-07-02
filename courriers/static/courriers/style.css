@@ -1,0 +1,19 @@
+:root { --app-primary: #0f4c81; --app-accent: #1d9e75; }
+body { background: #f4f6f9; }
+.app-navbar { background: var(--app-primary); }
+.app-navbar .badge { position: absolute; top: 4px; right: 0; font-size: .6rem; }
+.card { border: none; box-shadow: 0 1px 3px rgba(0,0,0,.08); border-radius: .6rem; }
+.stat-card .display-6 { font-weight: 600; color: var(--app-primary); }
+.timeline { list-style: none; padding-left: 0; }
+.timeline li { position: relative; padding: 0 0 1.1rem 1.6rem; border-left: 2px solid #dde3ea; }
+.timeline li:last-child { border-left: 2px solid transparent; }
+.timeline li::before { content: ""; position: absolute; left: -7px; top: 2px;
+  width: 12px; height: 12px; border-radius: 50%; background: var(--app-accent); }
+.timeline .meta { font-size: .8rem; color: #6c757d; }
+.badge-statut { font-size: .75rem; }
+.recherche-resultats { position: absolute; z-index: 1000; width: 100%;
+  max-height: 240px; overflow-y: auto; background: #fff; border: 1px solid #dee2e6;
+  border-radius: .3rem; box-shadow: 0 4px 10px rgba(0,0,0,.1); }
+.recherche-resultats button { display: block; width: 100%; text-align: left;
+  border: 0; background: #fff; padding: .5rem .75rem; }
+.recherche-resultats button:hover { background: #eef4fb; }

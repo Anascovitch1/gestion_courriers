@@ -1,0 +1,29 @@
+{% extends "courriers/base.html" %}
+{% block titre %}Connexion{% endblock %}
+{% block contenu %}
+<div class="row justify-content-center">
+  <div class="col-md-5 col-lg-4">
+    <div class="card mt-5">
+      <div class="card-body p-4">
+        <h1 class="h4 text-center mb-1"><i class="bi bi-envelope-paper text-primary"></i> GesCourrier</h1>
+        <p class="text-center text-muted small mb-4">Gestion des courriers — administration fiscale</p>
+        {% if form.errors %}
+          <div class="alert alert-danger py-2">Identifiant ou mot de passe incorrect.</div>
+        {% endif %}
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label">Identifiant</label>
+            <input type="text" name="username" class="form-control" autofocus required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Mot de passe</label>
+            <input type="password" name="password" class="form-control" required>
+          </div>
+          <button class="btn btn-primary w-100" type="submit">Se connecter</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "courriers/base.html" %}
+{% block titre %}Importer les contribuables{% endblock %}
+{% block contenu %}
+<div class="row justify-content-center"><div class="col-lg-7">
+  <h1 class="h5 mb-3">Importer la base des contribuables</h1>
+  <div class="card mb-3"><div class="card-body">
+    <p class="text-muted">Fichier Excel (.xlsx) dont la première ligne contient les en-têtes :
+      <code>NIF</code>, <code>Raison sociale</code>, <code>Activité</code>, <code>Adresse</code>,
+      <code>Téléphone</code>, <code>Email</code>, <code>Régime</code>.
+      Les contribuables existants (même NIF) sont mis à jour.</p>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="mb-3">{{ form.fichier }}</div>
+      <button class="btn btn-primary" type="submit"><i class="bi bi-upload"></i> Lancer l'import</button>
+      <a class="btn btn-outline-secondary" href="{% url 'contribuable_list' %}">Retour</a>
+    </form>
+  </div></div>
+
+  {% if resultat %}
+  <div class="card"><div class="card-body">
+    <h2 class="h6">Résultat</h2>
+    <ul class="mb-0">
+      <li>{{ resultat.crees }} contribuable(s) créé(s)</li>
+      <li>{{ resultat.maj }} mis à jour</li>
+      {% if resultat.erreurs %}<li class="text-danger">{{ resultat.erreurs|length }} erreur(s) :</li>{% endif %}
+    </ul>
+    {% if resultat.erreurs %}<ul class="small text-danger mt-2">{% for e in resultat.erreurs %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+  </div></div>
+  {% endif %}
+</div></div>
+{% endblock %}

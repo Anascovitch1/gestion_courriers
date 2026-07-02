@@ -1,0 +1,62 @@
+{% extends "courriers/base.html" %}
+{% block titre %}Statistiques{% endblock %}
+{% block contenu %}
+<h1 class="h4 mb-3">Statistiques</h1>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3"><div class="card stat-card text-center p-3">
+    <div class="display-6">{{ total }}</div><div class="text-muted small">Courriers au total</div></div></div>
+  <div class="col-6 col-md-3"><div class="card stat-card text-center p-3">
+    <div class="display-6">{{ nb_envoyes }}</div><div class="text-muted small">Envoyés</div></div></div>
+  <div class="col-6 col-md-3"><div class="card stat-card text-center p-3">
+    <div class="display-6">{{ delai_moyen }}</div><div class="text-muted small">Délai moyen (jours)</div></div></div>
+  <div class="col-6 col-md-3"><div class="card stat-card text-center p-3">
+    <div class="display-6">{{ nb_archives }}</div><div class="text-muted small">Archivés</div></div></div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-5">
+    <div class="card h-100"><div class="card-header bg-white fw-semibold">Répartition par statut</div>
+      <div class="card-body"><canvas id="chStatut" height="220"></canvas></div></div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card h-100"><div class="card-header bg-white fw-semibold">Délai moyen de traitement par structure (jours)</div>
+      <div class="card-body"><canvas id="chStruct" height="220"></canvas></div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header bg-white fw-semibold">Détail des délais par structure</div>
+  <div class="table-responsive">
+    <table class="table mb-0">
+      <thead class="table-light"><tr><th>Structure</th><th>Courriers traités</th><th>Délai moyen (jours)</th></tr></thead>
+      <tbody>
+      {% for nom, nb, moy in struct_table %}
+        <tr><td>{{ nom }}</td><td>{{ nb }}</td><td>{{ moy }}</td></tr>
+      {% empty %}
+        <tr><td colspan="3" class="text-center text-muted py-3">Aucun courrier envoyé pour le moment.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const D = JSON.parse('{{ donnees_json|escapejs }}');
+new Chart(document.getElementById('chStatut'), {
+  type: 'doughnut',
+  data: { labels: D.statut_labels, datasets: [{ data: D.statut_values,
+    backgroundColor: ['#0F4C81','#1D9E75','#EF9F27','#378ADD','#D85A30','#888780'] }] },
+  options: { plugins: { legend: { position: 'bottom' } } }
+});
+new Chart(document.getElementById('chStruct'), {
+  type: 'bar',
+  data: { labels: D.struct_labels, datasets: [{ label: 'Délai moyen (jours)', data: D.struct_moy,
+    backgroundColor: '#0F4C81' }] },
+  options: { scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "courriers/base.html" %}
+{% block titre %}{{ courrier.reference }}{% endblock %}
+{% block contenu %}
+<div class="d-flex justify-content-between align-items-start mb-3">
+  <div>
+    <h1 class="h4 mb-1">{{ courrier.reference }}
+      <span class="badge bg-info text-dark">{{ courrier.get_statut_display }}</span></h1>
+    <div class="text-muted">{{ courrier.get_type_display }} — {{ courrier.objet }}</div>
+  </div>
+  <a class="btn btn-outline-secondary btn-sm" href="{% url 'courrier_list' %}"><i class="bi bi-arrow-left"></i> Retour</a>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card mb-4">
+      <div class="card-header bg-white fw-semibold">Informations</div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-sm-4">Contribuable</dt><dd class="col-sm-8">{{ courrier.contribuable.raison_sociale }}</dd>
+          <dt class="col-sm-4">NIF</dt><dd class="col-sm-8">{{ courrier.contribuable.nif }}</dd>
+          <dt class="col-sm-4">Activité</dt><dd class="col-sm-8">{{ courrier.contribuable.activite|default:"—" }}</dd>
+          <dt class="col-sm-4">Date du courrier</dt><dd class="col-sm-8">{{ courrier.date_courrier }}</dd>
+          <dt class="col-sm-4">Enregistré par</dt><dd class="col-sm-8">{{ courrier.enregistre_par|default:"—" }}</dd>
+          <dt class="col-sm-4">Détenteur actuel</dt><dd class="col-sm-8">{{ courrier.detenteur_courant|default:"—" }}</dd>
+          {% if courrier.description %}<dt class="col-sm-4">Description</dt><dd class="col-sm-8">{{ courrier.description }}</dd>{% endif %}
+          {% if courrier.courrier_parent %}<dt class="col-sm-4">Courrier d'origine</dt>
+            <dd class="col-sm-8"><a href="{% url 'courrier_detail' courrier.courrier_parent.pk %}">{{ courrier.courrier_parent.reference }}</a></dd>{% endif %}
+        </dl>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header bg-white fw-semibold d-flex justify-content-between">
+        <span><i class="bi bi-paperclip"></i> Pièces scannées</span>
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for p in pieces %}
+          <li class="list-group-item d-flex justify-content-between">
+            <span>{{ p.libelle|default:p.fichier.name }}</span>
+            <a href="{{ p.fichier.url }}" target="_blank" class="btn btn-sm btn-outline-secondary">Voir</a>
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted">Aucune pièce jointe.</li>
+        {% endfor %}
+      </ul>
+      <div class="card-body">
+        <form method="post" action="{% url 'piece_ajouter' courrier.pk %}" enctype="multipart/form-data" class="row g-2">
+          {% csrf_token %}
+          <div class="col-7"><input type="file" name="fichier" class="form-control form-control-sm" required></div>
+          <div class="col-3"><input type="text" name="libelle" class="form-control form-control-sm" placeholder="Libellé"></div>
+          <div class="col-2"><button class="btn btn-sm btn-outline-primary w-100">Ajouter</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card mb-4">
+      <div class="card-header bg-white fw-semibold">Actions disponibles</div>
+      <div class="card-body d-grid gap-2">
+        {% if peut_affecter %}<a class="btn btn-primary" href="{% url 'affecter' courrier.pk %}"><i class="bi bi-arrow-down-circle"></i> Affecter</a>{% endif %}
+        {% if peut_traiter %}<a class="btn btn-success" href="{% url 'traiter' courrier.pk %}"><i class="bi bi-check2-square"></i> Traiter</a>{% endif %}
+        {% if peut_valider %}<a class="btn btn-warning" href="{% url 'valider' courrier.pk %}"><i class="bi bi-arrow-up-circle"></i> Valider / Rejeter</a>{% endif %}
+        {% if peut_envoyer %}<a class="btn btn-dark" href="{% url 'envoyer' courrier.pk %}"><i class="bi bi-send"></i> Envoyer au contribuable</a>{% endif %}
+        <a class="btn btn-outline-secondary" href="{% url 'accuse_reception' courrier.pk %}" target="_blank"><i class="bi bi-file-earmark-pdf"></i> Accusé de réception (PDF)</a>
+        {% if peut_archiver %}
+        <form method="post" action="{% url 'archiver' courrier.pk %}" onsubmit="return confirm('Archiver ce courrier clôturé ?');">
+          {% csrf_token %}
+          <button class="btn btn-outline-dark w-100" type="submit"><i class="bi bi-archive"></i> Archiver</button>
+        </form>
+        {% endif %}
+        {% if courrier.archive %}<span class="badge bg-secondary">Archivé le {{ courrier.date_archivage|date:"d/m/Y" }}</span>{% endif %}
+        {% if not peut_affecter and not peut_traiter and not peut_valider and not peut_envoyer %}
+          <p class="text-muted small mb-0">Aucune action requise de votre part à cette étape.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header bg-white fw-semibold"><i class="bi bi-signpost-split"></i> Suivi du courrier</div>
+      <div class="card-body">
+        <ul class="timeline">
+          {% for a in acheminements %}
+            <li>
+              <div class="fw-semibold">{{ a.get_action_display }}</div>
+              <div class="meta">
+                {% if a.de_utilisateur %}{{ a.de_utilisateur }}{% else %}—{% endif %}
+                {% if a.vers_utilisateur %} → {{ a.vers_utilisateur }}{% elif a.action == 'ENVOI' %} → Contribuable{% endif %}
+                · {{ a.date|date:"d/m/Y H:i" }}
+              </div>
+              {% if a.commentaire %}<div class="small mt-1">{{ a.commentaire }}</div>{% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

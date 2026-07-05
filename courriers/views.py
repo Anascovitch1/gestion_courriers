@@ -87,7 +87,7 @@ def courrier_create(request):
     if request.method == "POST":
         form = CourrierForm(request.POST)
         pj_form = PieceJointeForm(request.POST, request.FILES)
-        if form.is_valid():
+        if form.is_valid() and pj_form.is_valid():
             courrier = form.save(commit=False)
             courrier.enregistre_par = request.user
             courrier.detenteur_courant = request.user

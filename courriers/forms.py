@@ -44,7 +44,11 @@ class PieceJointeForm(forms.ModelForm):
             "fichier": forms.ClearableFileInput(attrs={"class": "form-control"}),
             "libelle": forms.TextInput(attrs={"class": "form-control", "placeholder": "Ex. : courrier scanné"}),
         }
-
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Le scan est facultatif à l'enregistrement.
+        self.fields["fichier"].required = False
+        self.fields["libelle"].required = False
 
 class AffectationForm(forms.Form):
     destinataire = forms.ModelChoiceField(

@@ -119,3 +119,13 @@ LOGOUT_REDIRECT_URL = "login"
 
 # Taille max d'un fichier scanné en mémoire avant écriture disque (2,5 Mo)
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "root": {"handlers": ["console"], "level": "INFO"},
+    "loggers": {
+        "django.request": {"handlers": ["console"], "level": "ERROR", "propagate": False},
+    },
+}

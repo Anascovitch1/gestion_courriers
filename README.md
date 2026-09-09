@@ -1,4 +1,4 @@
-# GesCourrier — Gestion des courriers d'une administration fiscale
+# GesCourrier - Gestion des courriers d'une administration fiscale
 
 Application web (Django) de gestion des courriers entrants et sortants, avec
 circuit d'affectation hiérarchique (directeur → chef de division → chef de

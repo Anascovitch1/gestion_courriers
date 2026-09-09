@@ -39,7 +39,7 @@ class Structure(models.Model):
         ordering = ["type", "nom"]
 
     def __str__(self):
-        return f"{self.get_type_display()} — {self.nom}"
+        return f"{self.get_type_display()} - {self.nom}"
 
 
 class Utilisateur(AbstractUser):
@@ -94,7 +94,7 @@ class Contribuable(models.Model):
         ordering = ["raison_sociale"]
 
     def __str__(self):
-        return f"{self.nif} — {self.raison_sociale}"
+        return f"{self.nif} - {self.raison_sociale}"
 
 
 class Courrier(models.Model):
@@ -149,7 +149,7 @@ class Courrier(models.Model):
         ordering = ["-date_enregistrement"]
 
     def __str__(self):
-        return f"{self.reference} — {self.objet}"
+        return f"{self.reference} - {self.objet}"
 
     def get_absolute_url(self):
         return reverse("courrier_detail", args=[self.pk])
@@ -178,7 +178,7 @@ class PieceJointe(models.Model):
 
 
 class Acheminement(models.Model):
-    """Une ligne par mouvement du courrier — assure le suivi et la traçabilité."""
+    """Une ligne par mouvement du courrier - assure le suivi et la traçabilité."""
 
     AFFECTATION = "AFFECTATION"
     TRAITEMENT = "TRAITEMENT"

@@ -23,7 +23,7 @@
       <tbody>
       {% for c in contribuables %}
         <tr><td class="fw-semibold">{{ c.nif }}</td><td>{{ c.raison_sociale }}</td>
-        <td>{{ c.activite|default:"—" }}</td><td>{{ c.telephone|default:"—" }}</td><td class="small">{{ c.email|default:"—" }}</td></tr>
+        <td>{{ c.activite|default:"-" }}</td><td>{{ c.telephone|default:"-" }}</td><td class="small">{{ c.email|default:"-" }}</td></tr>
       {% empty %}
         <tr><td colspan="5" class="text-center text-muted py-3">Aucun contribuable. Importez votre base ou créez une fiche.</td></tr>
       {% endfor %}

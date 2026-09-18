@@ -5,7 +5,7 @@
   <div>
     <h1 class="h4 mb-1">{{ courrier.reference }}
       <span class="badge bg-info text-dark">{{ courrier.get_statut_display }}</span></h1>
-    <div class="text-muted">{{ courrier.get_type_display }} — {{ courrier.objet }}</div>
+    <div class="text-muted">{{ courrier.get_type_display }} - {{ courrier.objet }}</div>
   </div>
   <a class="btn btn-outline-secondary btn-sm" href="{% url 'courrier_list' %}"><i class="bi bi-arrow-left"></i> Retour</a>
 </div>

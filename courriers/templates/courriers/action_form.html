@@ -8,7 +8,7 @@
       <a class="btn btn-sm btn-outline-secondary" href="{% url 'courrier_detail' courrier.pk %}">Annuler</a>
     </div>
     <div class="alert alert-light border small">
-      <strong>{{ courrier.reference }}</strong> — {{ courrier.objet }}<br>
+      <strong>{{ courrier.reference }}</strong> - {{ courrier.objet }}<br>
       Contribuable : {{ courrier.contribuable.raison_sociale }} ({{ courrier.contribuable.nif }})
     </div>
     <div class="card">

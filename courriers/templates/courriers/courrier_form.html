@@ -107,11 +107,11 @@ input.addEventListener('input', () => {
 function choisir(c) {
   let opt = select.querySelector('option[value="' + c.id + '"]');
   if (!opt) {
-    opt = new Option(c.nif + ' — ' + c.raison_sociale, c.id, true, true);
+    opt = new Option(c.nif + ' - ' + c.raison_sociale, c.id, true, true);
     select.add(opt);
   }
   select.value = c.id;
-  input.value = c.nif + ' — ' + c.raison_sociale;
+  input.value = c.nif + ' - ' + c.raison_sociale;
   boite.classList.add('d-none');
 }
 

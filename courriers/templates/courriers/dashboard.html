@@ -46,7 +46,7 @@
   <ul class="list-group list-group-flush">
     {% for c in derniers %}
       <li class="list-group-item d-flex justify-content-between">
-        <span><a href="{% url 'courrier_detail' c.pk %}">{{ c.reference }}</a> — {{ c.objet|truncatechars:50 }}</span>
+        <span><a href="{% url 'courrier_detail' c.pk %}">{{ c.reference }}</a> - {{ c.objet|truncatechars:50 }}</span>
         <span class="badge bg-light text-dark">{{ c.get_statut_display }}</span>
       </li>
     {% empty %}
